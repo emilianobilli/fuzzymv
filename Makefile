@@ -68,14 +68,15 @@ $(PYTHON_DIR)/lib%.so: $(GENERATED_DIR)/%.c $(SRCS) | $(PYTHON_DIR)
 	$(CC) $(CFLAGS) -fPIC -shared -I$(CORE_DIR) -I$(GENERATED_DIR) \
 		$(SRCS) $< -o $@
 
-# require("name") busca name.so (sin prefijo lib) en package.cpath.
-LUA_MODULES := $(patsubst $(GENERATED_DIR)/%.c,$(LUA_DIR)/%.so,$(CONTROLLER_SRCS))
+# El wrapper lua/{name}.lua (generado por fvm_compile.py) carga name_native.so
+# por path y expone require("name") como API publica.
+LUA_MODULES := $(patsubst $(GENERATED_DIR)/%.c,$(LUA_DIR)/%_native.so,$(CONTROLLER_SRCS))
 
 lua-modules: $(LUA_MODULES)
 
-$(LUA_DIR)/%.so: $(GENERATED_DIR)/%.c $(LUA_DIR)/%_lua.c $(SRCS) | $(LUA_DIR)
+$(LUA_DIR)/%_native.so: $(GENERATED_DIR)/%.c $(LUA_DIR)/%_lua.c $(SRCS) | $(LUA_DIR)
 	$(CC) $(CFLAGS) $(LUA_CFLAGS) -fPIC -shared -I$(CORE_DIR) -I$(GENERATED_DIR) \
-		$(SRCS) $< $(LUA_DIR)/$*_lua.c $(LUA_LIBS) -o $@
+		$(SRCS) $(GENERATED_DIR)/$*.c $(LUA_DIR)/$*_lua.c $(LUA_LIBS) -o $@
 
 clean:
 	rm -rf $(BUILD_DIR)
