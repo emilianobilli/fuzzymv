@@ -22,4 +22,15 @@ enum {
 
 extern const char *const FVM_ERROR_STRINGS[FVM_ERROR_MAX_CODE + 1];
 
+/**
+ * @brief Translate an fvm_eval() return code into a human-readable string.
+ *
+ * Accepts both the raw error code and the negated code returned by
+ * fvm_eval() (0 on success, -ERROR_CODE on failure).
+ *
+ * @param rc Return code from fvm_eval() or a generated *_eval() function.
+ * @return Static string, never NULL (falls back to "Unknown error code").
+ */
+const char *fvm_error_string(int rc);
+
 #endif

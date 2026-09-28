@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "fvm_errors.h"
 
 const char *const FVM_ERROR_STRINGS[FVM_ERROR_MAX_CODE + 1] = {
@@ -17,3 +19,16 @@ const char *const FVM_ERROR_STRINGS[FVM_ERROR_MAX_CODE + 1] = {
     [FVM_EXEC_ERR_MISSING_END]     = "Missing END instruction in program",
     [FVM_EXEC_ERR_EMPTY_RESULT]    = "Empty result (zero denominator)"
 };
+
+const char *fvm_error_string(int rc)
+{
+    int code = rc < 0 ? -rc : rc;
+    static char unknown[32];
+
+    if (code < 0 || code > FVM_ERROR_MAX_CODE) {
+        snprintf(unknown, sizeof(unknown), "Unknown error code %d", rc);
+        return unknown;
+    }
+
+    return FVM_ERROR_STRINGS[code];
+}

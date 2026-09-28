@@ -1,6 +1,7 @@
 /ns3-module
 /lander
 /generated
+/python
+/lua
 /build
-/.vscode
 /.vscode
